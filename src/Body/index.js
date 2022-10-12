@@ -7,7 +7,7 @@ function Body() {
   return (
     <>
         <Row>
-            <h2>Future graph area</h2>
+            <h3>Future graph area</h3>
         </Row>
       </>)}
 

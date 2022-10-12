@@ -9,14 +9,16 @@ import Footer from './Footer';
 function App() {
 
 
-  const [radioValue, setRadioValue] = useState('1');
+  const [radioValue, setRadioValue] = useState('low');
+  const [hourValue, setHourValue] = useState(1);
 
   return (
     
     <Container>
       <Header setRadioValue={setRadioValue} radioValue={radioValue}/>
-      <Body radioValue={radioValue}/>
-      <Footer radioValue={radioValue}/>
+      <Body radioValue={radioValue} hourValue={hourValue}/>
+      <Footer radioValue={radioValue} hourValue={hourValue} setHourValue={setHourValue}/>
+      
       
     </Container>
   );
