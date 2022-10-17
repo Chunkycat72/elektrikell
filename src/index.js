@@ -4,12 +4,14 @@ import './index.css';
 import App from './App';
 //import reportWebVitals from './reportWebVitals';
 
+//ReactDOM - provides connection between React and DOM
+//DOM - Document Object Model, html document structure in js object 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// here's element with id 'root' created, react app is inserted into that element
 root.render(
     <App />
 );
+// render - renders React elements/components in html(DOM)
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-//reportWebVitals();
+//simple explanation - why React ?
+//component and states are changes only what needs to be changed, thus website works fast
