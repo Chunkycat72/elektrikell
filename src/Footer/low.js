@@ -13,15 +13,15 @@ function Low({hourValue, setHourValue}) {
 
 
     const cheapHours = [
-        { label: '1h', value: '1' },
-        { label: '2h', value: '2' },
-        { label: '3h', value: '3' },
-        { label: '4h', value: '4' },
-        { label: '6h', value: '6' },
-        { label: '8h', value: '8' },
+        { label: '1h', value: 1 },
+        { label: '2h', value: 2 },
+        { label: '3h', value: 3 },
+        { label: '4h', value: 4 },
+        { label: '6h', value: 6 },
+        { label: '8h', value: 8 },
       ];
 
-      
+    //object event contains information about element that was changed
       function handleOnChange(event) {
         const hour = event.currentTarget.value;
         const newDate = new Date().setHours(23 - hour,59,59,999);
@@ -32,8 +32,14 @@ function Low({hourValue, setHourValue}) {
         }
 
         setTime(newDate);
-        setHourValue(event.currentTarget.value);
+        setHourValue(+hour);
       }
+
+    //onChange - event trigger
+    //event - arrives from browser, browser receives it from user
+    //on Change launches when user made change in input elements
+    //on Change launches function that we call handlers. Trigger sends event object to handler.
+    //event trigger names start with 'on'
     return (
         <>
             <Row>

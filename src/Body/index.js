@@ -1,57 +1,77 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
+import {useEffect, useState} from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
+import { getPriceData } from '../services/apiservice';
+import ErrorModal from '../ErrorModal'
+import moment from 'moment';
 
 
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+function Body({hourValue}) {
 
-function Body() {
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [data, setData] = useState([]);
+  const [hourNowi, setHourNow] = useState(0);
+  const [x1, setX1] = useState(0);
+  const [x2, setX2] = useState(0);
+
+  useEffect(() => {
+    (async function () {
+      try{
+        const response = await getPriceData();
+        const data = response.data.ee.map(dataObject => {
+          return {
+            x: moment.unix(dataObject.timestamp).format('HH'),
+            y: dataObject.price
+          }
+        });
+        const hourNowi = data.findIndex(dataObject => {
+          return dataObject.x === moment().format('HH');
+        });
+        setHourNow(hourNowi);
+        setData(data);
+        const futureData = data.filter((v,i) => i >= 9);
+        const areaPrices = [];
+
+        futureData.forEach((v,i,arr)=>{
+          const partData = arr.slice(i, i + hourValue);
+          if (partData.length === hourValue) {
+            let result = 0;
+            for (const p of partData) result += p.y;
+            areaPrices.push({ result, i });
+          }
+          return;
+        });
+
+        areaPrices.sort((a,b) => a.result - b.result);
+        
+        setX1(9 + areaPrices[0].i);
+        const x2 = 9 + areaPrices[0].i + hourValue;
+        setX2(x2);
+
+        // const futureData = data.filter((v,i) => i >= 9);
+        // futureData.sort((a, b) => a.y - b.y);
+
+        // const x1 = data.findIndex(dataObject => {
+        //   return dataObject.y === futureData[0].y;
+        // })
+        // setX1(x1);
+        // setX2(x1+1);
+
+      } catch(error){
+        setShowError(true);
+        setErrorMessage(error.message);
+      }
+      
+    })();
+  }, [hourValue]); 
+
+
   return (
+    <>
     <Row>
       <Col>
         <ResponsiveContainer width="100%" height="100%" minHeight = "500px">
@@ -67,16 +87,18 @@ function Body() {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+            <XAxis dataKey="x" />
+            <YAxis dataKey="y" />
             <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <ReferenceLine x={hourNowi} stroke="red"  />
+            <ReferenceArea x1={x1} x2={x2}  stroke="green" fill="green" opacity={0.3} />
           </LineChart>
         </ResponsiveContainer>
       </Col>
     </Row>
+    <ErrorModal errorMessage={errorMessage} show={showError} setShow={setShowError}/>
+    </>
   );
 }
 

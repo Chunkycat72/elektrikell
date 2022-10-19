@@ -1,12 +1,32 @@
+import {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
+import {getCurrentPrice} from '../services/apiservice';
+import ErrorModal from '../ErrorModal'
 
 function Header(props) {
   
+  const [price, setPrice] = useState(0);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+      (async function() {
+      try {
+        const response = await getCurrentPrice();
+        setPrice(response.data[0].price);
+      } catch(error) {
+          setShowError(true);
+          setErrorMessage(error.message);
+      }
+      
+      }) ();
+  }, []); 
+
 
   const radios = [
     { name: 'Low price', value: 'low' },
@@ -43,8 +63,9 @@ function Header(props) {
         ))}
       </ButtonGroup>
         </Col>
-        <Col>Hind</Col>
+        <Col>Hind {price}eur MWh/h</Col>
       </Row> 
+      <ErrorModal errorMessage={errorMessage} show={showError} setShow={setShowError}/>
       </>)}
 
 export default Header;
