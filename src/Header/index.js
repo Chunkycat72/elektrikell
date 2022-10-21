@@ -8,9 +8,9 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import {getCurrentPrice} from '../services/apiservice';
 import ErrorModal from '../ErrorModal'
 
-function Header(props) {
+function Header({currentPrice, setCurrentPrice, radioValue, setRadioValue}) {
   
-  const [price, setPrice] = useState(0);
+  
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -18,14 +18,14 @@ function Header(props) {
       (async function() {
       try {
         const response = await getCurrentPrice();
-        setPrice(response.data[0].price);
+        setCurrentPrice(response.data[0].price);
       } catch(error) {
           setShowError(true);
           setErrorMessage(error.message);
       }
       
       }) ();
-  }, []); 
+  }, [setCurrentPrice]); 
 
 
   const radios = [
@@ -35,7 +35,7 @@ function Header(props) {
 
   function handleOnChange(event){
     //event.preventDefault();
-    props.setRadioValue(event.currentTarget.value);
+    setRadioValue(event.currentTarget.value);
   }
   return (
     
@@ -55,7 +55,7 @@ function Header(props) {
             variant={idx % 2 ? 'outline-danger' : 'outline-success'}
             name="radio"
             value={radio.value}
-            checked={props.radioValue === radio.value}
+            checked={radioValue === radio.value}
             onChange={handleOnChange}
           >
             {radio.name}
@@ -63,7 +63,7 @@ function Header(props) {
         ))}
       </ButtonGroup>
         </Col>
-        <Col>Hind {price}eur MWh/h</Col>
+        <Col>Hind {currentPrice}eur MWh/h</Col>
       </Row> 
       <ErrorModal errorMessage={errorMessage} show={showError} setShow={setShowError}/>
       </>)}

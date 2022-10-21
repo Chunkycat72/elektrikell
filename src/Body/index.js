@@ -9,7 +9,8 @@ import ErrorModal from '../ErrorModal'
 import moment from 'moment';
 
 
-function Body({hourValue}) {
+
+function Body({radioValue, hourValue, setBestTimeRange, setWorstTimeRange }) {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -21,45 +22,56 @@ function Body({hourValue}) {
   useEffect(() => {
     (async function () {
       try{
+        let priceData = data;
+        if (!priceData.length) {
         const response = await getPriceData();
-        const data = response.data.ee.map(dataObject => {
+        priceData = response.data.ee.map(dataObject => {
           return {
             x: moment.unix(dataObject.timestamp).format('HH'),
-            y: dataObject.price
+            y: dataObject.price,
+            timestamp: dataObject.timestamp,
           }
         });
-        const hourNowi = data.findIndex(dataObject => {
+        setData(priceData);
+      } 
+        const hourNowi = priceData.findIndex(dataObject => {
           return dataObject.x === moment().format('HH');
         });
         setHourNow(hourNowi);
-        setData(data);
-        const futureData = data.filter((v,i) => i >= 9);
+        
+        const futureData = priceData.filter((v,i) => i >= 9);
         const areaPrices = [];
 
         futureData.forEach((v,i,arr)=>{
-          const partData = arr.slice(i, i + hourValue);
-          if (partData.length === hourValue) {
+          const partData = arr.slice(i, i + hourValue + 1);
+          if (partData.length === hourValue + 1) {
             let result = 0;
             for (const p of partData) result += p.y;
             areaPrices.push({ result, i });
           }
           return;
         });
-
         areaPrices.sort((a,b) => a.result - b.result);
+        if(radioValue === 'low') {
+          
+        setBestTimeRange({
+          from: futureData[areaPrices[0].i].x, 
+          until: futureData[areaPrices[0].i + hourValue].x, 
+          timestamp: futureData[areaPrices[0].i].timestamp,
+          bestPrice: futureData[areaPrices[0].i].y,
+        });
+        } else {
+          areaPrices.reverse();
+        setWorstTimeRange({
+          from: futureData[areaPrices[0].i].x, 
+          until: futureData[areaPrices[0].i + hourValue].x, 
+          bestPrice: futureData[areaPrices[0].i].y,
+        });
+        }
         
         setX1(9 + areaPrices[0].i);
         const x2 = 9 + areaPrices[0].i + hourValue;
         setX2(x2);
-
-        // const futureData = data.filter((v,i) => i >= 9);
-        // futureData.sort((a, b) => a.y - b.y);
-
-        // const x1 = data.findIndex(dataObject => {
-        //   return dataObject.y === futureData[0].y;
-        // })
-        // setX1(x1);
-        // setX2(x1+1);
 
       } catch(error){
         setShowError(true);
@@ -67,7 +79,7 @@ function Body({hourValue}) {
       }
       
     })();
-  }, [hourValue]); 
+  }, [hourValue, data, setBestTimeRange, setWorstTimeRange, radioValue]); 
 
 
   return (
@@ -92,7 +104,11 @@ function Body({hourValue}) {
             <Tooltip />
             <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
             <ReferenceLine x={hourNowi} stroke="red"  />
-            <ReferenceArea x1={x1} x2={x2}  stroke="green" fill="green" opacity={0.3} />
+            {
+              radioValue === 'low'
+              ? <ReferenceArea x1={x1} x2={x2}  stroke="green" fill="green" opacity={0.3} />
+              : <ReferenceArea x1={x1} x2={x2}  stroke="red" fill="red" opacity={0.3} />
+            }
           </LineChart>
         </ResponsiveContainer>
       </Col>
