@@ -21,6 +21,15 @@ function Low({hourValue, setHourValue, bestTimeRange,currentPrice}) {
         { label: '8h', value: 8 },
       ];
 
+      //useEffect - react hook that launches after whole component rendered.
+      //useEffect - takes 2 arguments
+      //1 - callback function that launches 
+      //2 - array with dependencies 
+      //dependencies - variables used in callback function 
+      //in case of changes dependencies launch callback function again 
+      //leaving dependency array empty - garanties that callback function will run only once, even if state changed.
+      //aove is true in case state is not used in callback function
+
       useEffect(()=>{
             const countdownUntil = moment.unix(bestTimeRange.timestamp).toDate();
             setTime(countdownUntil);
