@@ -10,11 +10,18 @@ import moment from 'moment';
 
 
 
-function Body({radioValue, hourValue, setBestTimeRange, setWorstTimeRange }) {
+function Body({
+  radioValue, 
+  hourValue, 
+  setBestTimeRange, 
+  setWorstTimeRange,
+  selectedCountry, 
+}) {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
+  const [response, setResponse] = useState(null);
   const [hourNowi, setHourNow] = useState(0);
   const [x1, setX1] = useState(0);
   const [x2, setX2] = useState(0);
@@ -22,10 +29,13 @@ function Body({radioValue, hourValue, setBestTimeRange, setWorstTimeRange }) {
   useEffect(() => {
     (async function () {
       try{
-        let priceData = data;
-        if (!priceData.length) {
-        const response = await getPriceData();
-        priceData = response.data.ee.map(dataObject => {
+        if(!response) {
+          const response = await getPriceData();
+          setResponse(response.data);
+          return;
+        }
+
+        let priceData = response[selectedCountry.key].map(dataObject => {
           return {
             x: moment.unix(dataObject.timestamp).format('HH'),
             y: dataObject.price,
@@ -33,7 +43,7 @@ function Body({radioValue, hourValue, setBestTimeRange, setWorstTimeRange }) {
           }
         });
         setData(priceData);
-      } 
+
         const hourNowi = priceData.findIndex(dataObject => {
           return dataObject.x === moment().format('HH');
         });
@@ -79,7 +89,7 @@ function Body({radioValue, hourValue, setBestTimeRange, setWorstTimeRange }) {
       }
       
     })();
-  }, [hourValue, data, setBestTimeRange, setWorstTimeRange, radioValue]); 
+  }, [hourValue, data, setBestTimeRange, setWorstTimeRange, radioValue, response, selectedCountry]); 
 
 
   return (
