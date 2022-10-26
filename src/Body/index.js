@@ -42,8 +42,10 @@ function Body({
             timestamp: dataObject.timestamp,
           }
         });
+        if(!data){
         setData(priceData);
-
+        return;
+      }
         const hourNowi = priceData.findIndex(dataObject => {
           return dataObject.x === moment().format('HH');
         });
