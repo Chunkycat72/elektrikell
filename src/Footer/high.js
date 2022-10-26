@@ -1,9 +1,12 @@
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import {useSelector} from 'react-redux';
 
-function High({currentPrice, worstTimeRange }) {
+function High() {
+    const currentPrice = useSelector((state) => state.currentPrice);
+    const worstTimeRange = useSelector((state) => state.worstTimeRange);
     return (
-        <>
+        <div className="text-center">
             <Row>
                 <Col>Järgmine tiputund on</Col>
             </Row>
@@ -18,7 +21,7 @@ function High({currentPrice, worstTimeRange }) {
             <Row>
                 <Col>Soovitame tiptundide ajal vähendada elektri tarbimist, et aidata kaasa Euroopa ühisele eesmärgile alandada tiputundidel -5% elektri tarbmist ja vähendada maagaasi nõudlust. Loe lähemalt</Col>
             </Row>
-        </>)
+        </div>)
 }
 
 export default High;

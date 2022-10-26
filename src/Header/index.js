@@ -9,19 +9,19 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import {getCurrentPrice} from '../services/apiservice';
 import ErrorModal from '../ErrorModal'
+import {useSelector, useDispatch} from 'react-redux';
+import { setCurrentPrice, setRadioValue, setSelectedCountry } from '../services/stateService'
 
-function Header({
-  currentPrice, 
-  setCurrentPrice, 
-  radioValue, 
-  setRadioValue,
-  selectedCountry,
-  setSelectedCountry,
-}) {
+function Header() {
   
   
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const currentPrice = useSelector((state) => state.currentPrice);
+  const radioValue = useSelector((state) => state.radioValue);
+  const selectedCountry = useSelector((state) => state.selectedCountry);
+  const dispatch = useDispatch();
+
   const countries = [
     {key: 'ee', title: 'Eesti'},
     {key: 'fi', title: 'Soome'},
@@ -33,14 +33,14 @@ function Header({
       (async function() {
       try {
         const response = await getCurrentPrice();
-        setCurrentPrice(response.data[0].price);
+        dispatch(setCurrentPrice(response.data[0].price));
       } catch(error) {
           setShowError(true);
           setErrorMessage(error.message);
       }
       
       }) ();
-  }, [setCurrentPrice]); 
+  }, [dispatch]); 
 
 
   const radios = [
@@ -50,10 +50,10 @@ function Header({
 
   function handleOnChangePrice(event){
     //event.preventDefault();
-    setRadioValue(event.currentTarget.value);
+    dispatch(setRadioValue(event.currentTarget.value));
   }
   function handleOnSelectCountry(key, event) {
-    setSelectedCountry(countries.find(country => country.key === key));
+    dispatch(setSelectedCountry(countries.find(country => country.key === key)));
   }
 
   return (
@@ -68,6 +68,7 @@ function Header({
             variant="secondary"
             onSelect={handleOnSelectCountry}
             title={selectedCountry.title}
+            className="float-end"
           >
             {countries.map(country => <Dropdown.Item key={country.key} eventKey={country.key}>{country.title}</Dropdown.Item>)}
 
@@ -76,7 +77,7 @@ function Header({
       </Row>
       <Row>
         <Col>Status</Col>
-        <Col> 
+        <Col className="text-center"> 
         <ButtonGroup>
         {radios.map((radio, idx) => (
           <ToggleButton
@@ -94,7 +95,7 @@ function Header({
         ))}
       </ButtonGroup>
         </Col>
-        <Col>Hind {currentPrice}eur MWh/h</Col>
+        <Col className="text-end">Hind {currentPrice}eur MWh/h</Col>
       </Row> 
       <ErrorModal errorMessage={errorMessage} show={showError} setShow={setShowError}/>
       </>)}

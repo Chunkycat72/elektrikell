@@ -7,16 +7,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { getPriceData } from '../services/apiservice';
 import ErrorModal from '../ErrorModal'
 import moment from 'moment';
+import {useSelector, useDispatch} from 'react-redux';
+import {setBestTimeRange, setWorstTimeRange} from '../services/stateService'
 
 
-
-function Body({
-  radioValue, 
-  hourValue, 
-  setBestTimeRange, 
-  setWorstTimeRange,
-  selectedCountry, 
-}) {
+function Body() {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -25,6 +20,10 @@ function Body({
   const [hourNowi, setHourNow] = useState(0);
   const [x1, setX1] = useState(0);
   const [x2, setX2] = useState(0);
+  const hourValue = useSelector((state) => state.hourValue);
+  const radioValue = useSelector((state) => state.radioValue);
+  const selectedCountry = useSelector((state) => state.selectedCountry);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
@@ -66,19 +65,19 @@ function Body({
         areaPrices.sort((a,b) => a.result - b.result);
         if(radioValue === 'low') {
           
-        setBestTimeRange({
+        dispatch(setBestTimeRange({
           from: futureData[areaPrices[0].i].x, 
           until: futureData[areaPrices[0].i + hourValue].x, 
           timestamp: futureData[areaPrices[0].i].timestamp,
           bestPrice: futureData[areaPrices[0].i].y,
-        });
+        }));
         } else {
           areaPrices.reverse();
-        setWorstTimeRange({
+        dispatch(setWorstTimeRange({
           from: futureData[areaPrices[0].i].x, 
           until: futureData[areaPrices[0].i + hourValue].x, 
           bestPrice: futureData[areaPrices[0].i].y,
-        });
+        }));
         }
         
         setX1(9 + areaPrices[0].i);
@@ -91,7 +90,7 @@ function Body({
       }
       
     })();
-  }, [hourValue, data, setBestTimeRange, setWorstTimeRange, radioValue, response, selectedCountry]); 
+  }, [hourValue, data, dispatch, radioValue, response, selectedCountry]); 
 
 
   return (

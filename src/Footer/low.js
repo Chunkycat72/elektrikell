@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -5,12 +6,18 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Countdown from 'react-countdown';
 import moment from 'moment';
+import './footer.scss';
+import {useSelector, useDispatch} from 'react-redux';
+import { setHourValue} from '../services/stateService'
 
-function Low({hourValue, setHourValue, bestTimeRange,currentPrice}) {
+function Low() {
 
     const [showElement, setShowElement] = useState('countdown');
     const [time, setTime] = useState(null);
-
+    const hourValue = useSelector((state) => state.hourValue);
+    const currentPrice = useSelector((state) => state.currentPrice);
+    const bestTimeRange = useSelector((state) => state.bestTimeRange);
+    const dispatch = useDispatch();
 
     const cheapHours = [
         { label: '1h', value: 1 },
@@ -36,7 +43,7 @@ function Low({hourValue, setHourValue, bestTimeRange,currentPrice}) {
             setShowElement('Right now');
         }
 
-        setHourValue(+hour);
+        dispatch(setHourValue(+hour));
       }
 
     //onChange - event trigger
@@ -45,7 +52,7 @@ function Low({hourValue, setHourValue, bestTimeRange,currentPrice}) {
     //on Change launches function that we call handlers. Trigger sends event object to handler.
     //event trigger names start with 'on'
     return (
-        <>
+        <div className="text-center">
             <Row>
                 <Col>
                     <ButtonGroup>
@@ -78,7 +85,7 @@ function Low({hourValue, setHourValue, bestTimeRange,currentPrice}) {
                      mis on {Math.round(100 - bestTimeRange.bestPrice / currentPrice * 100)}% odavam kui praegu
                 </Col>
             </Row>
-        </>)
+        </div>)
 }
 
 export default Low;

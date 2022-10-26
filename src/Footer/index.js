@@ -2,13 +2,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 import Low from './low';
 import High from './high';
+import {useSelector} from 'react-redux';
 
 function Footer(props) {
+    const radioValue = useSelector((state) => state.radioValue);
    return (
-    <>
-        {props.radioValue === 'low' ? (<Low {...props}/>) : 
-        (<High currentPrice={props.currentPrice} worstTimeRange={props.worstTimeRange}/>)}
-    </>
+    <div id='footer'>
+        {radioValue === 'low' ? (<Low {...props}/>) : 
+        (<High/>)}
+    </div>
    )
     
 }
