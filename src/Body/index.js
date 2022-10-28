@@ -15,7 +15,7 @@ function Body() {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({});
   const [response, setResponse] = useState(null);
   const [hourNowi, setHourNow] = useState(0);
   const [x1, setX1] = useState(0);
@@ -33,7 +33,6 @@ function Body() {
           setResponse(response.data);
           return;
         }
-
         let priceData = response[selectedCountry.key].map(dataObject => {
           return {
             x: moment.unix(dataObject.timestamp).format('HH'),
@@ -41,9 +40,12 @@ function Body() {
             timestamp: dataObject.timestamp,
           }
         });
-        if(!data){
-        setData(priceData);
-        return;
+        if(!data.country || (data.country && data.country !== selectedCountry.key) ){
+          setData({
+            priceData,
+            country: selectedCountry.key,
+          });
+          return;
       }
         const hourNowi = priceData.findIndex(dataObject => {
           return dataObject.x === moment().format('HH');
@@ -101,7 +103,7 @@ function Body() {
           <LineChart
             width={500}
             height={300}
-            data={data}
+            data={data.priceData}
             margin={{
               top: 5,
               right: 30,
