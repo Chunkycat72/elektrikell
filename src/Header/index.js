@@ -10,7 +10,9 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import {getCurrentPrice} from '../services/apiservice';
 import ErrorModal from '../ErrorModal'
 import {useSelector, useDispatch} from 'react-redux';
-import { setCurrentPrice, setRadioValue, setSelectedCountry } from '../services/stateService'
+import { setCurrentPrice, setSelectedCountry } from '../services/stateService'
+// import { Link } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 
 function Header() {
   
@@ -18,9 +20,10 @@ function Header() {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const currentPrice = useSelector((state) => state.currentPrice);
-  const radioValue = useSelector((state) => state.radioValue);
   const selectedCountry = useSelector((state) => state.selectedCountry);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const countries = [
     {key: 'ee', title: 'Eesti'},
@@ -44,13 +47,13 @@ function Header() {
 
 
   const radios = [
-    { name: 'Low price', value: 'low' },
-    { name: 'High price', value: 'high' },
+    { name: 'Low price', value: '/low' },
+    { name: 'High price', value: '/high' },
   ];
 
   function handleOnChangePrice(event){
     //event.preventDefault();
-    dispatch(setRadioValue(event.currentTarget.value));
+    navigate(event.currentTarget.value);
   }
   function handleOnSelectCountry(key, event) {
     dispatch(setSelectedCountry(countries.find(country => country.key === key)));
@@ -71,13 +74,15 @@ function Header() {
             className="float-end"
           >
             {countries.map(country => <Dropdown.Item key={country.key} eventKey={country.key}>{country.title}</Dropdown.Item>)}
-
+          
           </DropdownButton>
         </Col>
       </Row>
       <Row>
         <Col>Status</Col>
         <Col className="text-center"> 
+        {/* <Link to='/high'>show High Price</Link>
+        <Link to='/low'>show Low Price</Link> */}
         <ButtonGroup>
         {radios.map((radio, idx) => (
           <ToggleButton
@@ -87,7 +92,7 @@ function Header() {
             variant={idx % 2 ? 'outline-danger' : 'outline-success'}
             name="radio"
             value={radio.value}
-            checked={radioValue === radio.value}
+            checked={location.pathname === radio.value || (idx === 0 && location.pathname === '/')}
             onChange={handleOnChangePrice}
           >
             {radio.name}
