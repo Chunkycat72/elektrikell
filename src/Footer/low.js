@@ -40,7 +40,7 @@ function Low() {
     //object event contains information about element that was changed
       function handleOnChange(event) {
         const hour = event.currentTarget.value;
-        dispatch(setHourValue(hour));
+        //dispatch(setHourValue(hour));
         if(bestTimeRange.timestamp > moment().unix()) {
             setShowElement('countdown');
         } else {
