@@ -10,6 +10,7 @@ import './footer.scss';
 import {useSelector, useDispatch} from 'react-redux';
 import { setHourValue} from '../services/stateService'
 import { useParams, useNavigate} from 'react-router-dom'
+import { localUrl } from '../services/apiservice';
 
 function Low() {
 
@@ -35,17 +36,18 @@ function Low() {
             const countdownUntil = moment.unix(bestTimeRange.timestamp).toDate();
             setTime(countdownUntil);
             dispatch(setHourValue(+hours  || 1));
+            if(bestTimeRange.timestamp > moment().unix()) {
+                setShowElement('countdown');
+            } else {
+                setShowElement('Right now');
+            }
       }, [bestTimeRange, hours, dispatch]);
 
       function handleOnChange(event) {
         const hour = event.currentTarget.value;
         //dispatch(setHourValue(hour));
-        if(bestTimeRange.timestamp > moment().unix()) {
-            setShowElement('countdown');
-        } else {
-            setShowElement('Right now');
-        }
-        navigate('/low/'+ hour);
+        
+        navigate(localUrl + '/low/'+ hour);
         dispatch(setHourValue(+hour));
       }
 

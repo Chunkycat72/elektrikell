@@ -7,7 +7,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import {getCurrentPrice} from '../services/apiservice';
+import {getCurrentPrice, localUrl} from '../services/apiservice';
 import ErrorModal from '../ErrorModal'
 import {useSelector, useDispatch} from 'react-redux';
 import { setCurrentPrice, setSelectedCountry } from '../services/stateService'
@@ -53,7 +53,7 @@ function Header() {
 
   function handleOnChangePrice(event){
     //event.preventDefault();
-    navigate(event.currentTarget.value);
+    navigate(localUrl + event.currentTarget.value);
   }
   function handleOnSelectCountry(key, event) {
     dispatch(setSelectedCountry(countries.find(country => country.key === key)));
@@ -63,7 +63,9 @@ function Header() {
     
     <>
        <Row>
-        <Col> <h3>Elektrikell</h3></Col>
+        <Col> <h3 class="text-primary">Elektrikell <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-charge-fill" viewBox="0 0 16 16">
+  <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+</svg></h3></Col>
         <Col>
         <DropdownButton
             key="secondary"
@@ -92,7 +94,7 @@ function Header() {
             variant={idx % 2 ? 'outline-danger' : 'outline-success'}
             name="radio"
             value={radio.value}
-            checked={location.pathname.includes(radio.value) || (idx === 0 && location.pathname === '/')}
+            checked={location.pathname.includes(radio.value) || (idx === 0 && !location.pathname.includes('/low') && !location.pathname.includes('/high'))}
             onChange={handleOnChangePrice}
           >
             {radio.name}
