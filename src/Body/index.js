@@ -26,6 +26,7 @@ function Body() {
   const location = useLocation();
 
   useEffect(() => {
+
     (async function () {
       try {
         if (!response) {
@@ -47,6 +48,7 @@ function Body() {
         );
 
       } catch (error) {
+        console.error(error);
         setShowError(true);
         setErrorMessage(error.message);
       }
@@ -73,9 +75,9 @@ function Body() {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="x" />
-              <YAxis dataKey="y" />
+              <YAxis dataKey="price" />
               <Tooltip />
-              <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
+              <Line type="monotone" dataKey="price" stroke="#8884d8" activeDot={{ r: 8 }} />
               <ReferenceLine x={data.priceData?.findIndex(d => d.now)} stroke="red" />
               {
                 location.pathname.includes('low') || location.pathname === '/'

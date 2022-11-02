@@ -1,4 +1,6 @@
+
 import { configureStore, createAction, createReducer } from "@reduxjs/toolkit";
+
 
 const initialState = {
     hourValue: 1,
@@ -22,6 +24,8 @@ export const setCurrentPrice = createAction("setCurrentPrice");
 export const setSelectedCountry = createAction("setSelectedCountry");
 export const setBestTimeRange = createAction("setBestTimeRange");
 export const setWorstTimeRange = createAction("setWorstTimeRange");
+
+
 
 const reducer = createReducer(initialState, {
     [setHourValue]: (state, action) => {

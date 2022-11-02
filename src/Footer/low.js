@@ -34,10 +34,9 @@ function Low() {
       useEffect(()=>{
             const countdownUntil = moment.unix(bestTimeRange.timestamp).toDate();
             setTime(countdownUntil);
-            dispatch(setHourValue(+hours) || 1);
+            dispatch(setHourValue(+hours  || 1));
       }, [bestTimeRange, hours, dispatch]);
 
-    //object event contains information about element that was changed
       function handleOnChange(event) {
         const hour = event.currentTarget.value;
         //dispatch(setHourValue(hour));
@@ -50,11 +49,6 @@ function Low() {
         dispatch(setHourValue(+hour));
       }
 
-    //onChange - event trigger
-    //event - arrives from browser, browser receives it from user
-    //on Change launches when user made change in input elements
-    //on Change launches function that we call handlers. Trigger sends event object to handler.
-    //event trigger names start with 'on'
     return (
         <div className="text-center">
             <Row>
