@@ -19,8 +19,12 @@ function Header() {
   
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  //useSelector hook helps to watch redux state and returns new value  
+  //useSelector takes function in which whole redux state is recieved and needed state selected
+  //useSelector launches components render when needed 
   const currentPrice = useSelector((state) => state.currentPrice);
   const selectedCountry = useSelector((state) => state.selectedCountry);
+  //useDispatch function 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
